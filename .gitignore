@@ -4,3 +4,8 @@
 .phpunit.cache/
 .DS_Store
 *.zip
+
+# Claude Code (local only)
+CLAUDE.md
+CLAUDE.local.md
+.claude/
