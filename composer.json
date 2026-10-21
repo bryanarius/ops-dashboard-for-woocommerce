@@ -1,0 +1,42 @@
+{
+	"name": "bryanarius/ops-dashboard-for-woocommerce",
+	"description": "One admin screen for WooCommerce store managers: low-stock products, recent orders, and sales at a glance.",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"authors": [
+		{
+			"name": "Bryan Arius"
+		}
+	],
+	"require": {
+		"php": ">=8.1"
+	},
+	"require-dev": {
+		"brain/monkey": "^2.6",
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+		"phpcompatibility/phpcompatibility-wp": "^2.1",
+		"phpunit/phpunit": "^9.6",
+		"wp-coding-standards/wpcs": "^3.1"
+	},
+	"autoload-dev": {
+		"classmap": [
+			"includes/",
+			"admin/",
+			"tests/"
+		]
+	},
+	"scripts": {
+		"lint": "phpcs",
+		"lint:fix": "phpcbf",
+		"test": "phpunit"
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		},
+		"sort-packages": true,
+		"platform": {
+			"php": "8.1.0"
+		}
+	}
+}

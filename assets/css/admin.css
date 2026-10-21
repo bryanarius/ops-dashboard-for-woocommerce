@@ -1,0 +1,24 @@
+/* Ops Dashboard for WooCommerce: admin styles. Loaded only on the dashboard page. */
+
+.odwc-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+	gap: 16px;
+	margin-top: 16px;
+}
+
+.odwc-panel {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	padding: 16px;
+}
+
+.odwc-panel h2 {
+	margin-top: 0;
+	font-size: 14px;
+}
+
+.odwc-panel--sales {
+	grid-column: 1 / -1;
+}
