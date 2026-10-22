@@ -5,6 +5,7 @@
  * Variables available from Admin_Page::render():
  *
  * @var \OpsDashboardWC\Settings $settings
+ * @var array<int, array<string, mixed>> $low_stock     Rows from Data\Inventory::get_low_stock_products().
  * @var array<int, array<string, mixed>> $recent_orders Rows from Data\Orders::get_recent_orders().
  *
  * Escape everything you print: esc_html(), esc_attr(), esc_url(),
@@ -40,14 +41,29 @@ defined( 'ABSPATH' ) || exit;
 				);
 				?>
 			</h2>
-			<?php
-			/*
-			 * TODO (Days 3–4): render a table (class="widefat striped") of
-			 * products from Data\Inventory::get_low_stock_products(), each
-			 * name linking to its edit_url. Show a friendly empty state.
-			 * Day 7: add a category / stock-status filter that calls the AJAX handler.
-			 */
-			?>
+			<?php // TODO (Day 7): add a category / stock-status filter that calls the AJAX handler. ?>
+			<?php if ( empty( $low_stock ) ) : ?>
+				<p><?php esc_html_e( 'All products are above the low-stock threshold.', 'ops-dashboard-for-woocommerce' ); ?></p>
+			<?php else : ?>
+				<table class="widefat striped">
+					<thead>
+						<tr>
+							<th scope="col"><?php esc_html_e( 'Product', 'ops-dashboard-for-woocommerce' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'SKU', 'ops-dashboard-for-woocommerce' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Stock', 'ops-dashboard-for-woocommerce' ); ?></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ( $low_stock as $odwc_product ) : ?>
+							<tr>
+								<td><a href="<?php echo esc_url( $odwc_product['edit_url'] ); ?>"><?php echo esc_html( $odwc_product['name'] ); ?></a></td>
+								<td><?php echo esc_html( $odwc_product['sku'] ); ?></td>
+								<td><?php echo esc_html( $odwc_product['stock'] ); ?></td>
+							</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+			<?php endif; ?>
 		</section>
 
 		<section class="odwc-panel odwc-panel--orders">

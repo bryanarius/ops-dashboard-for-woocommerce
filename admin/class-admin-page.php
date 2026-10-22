@@ -125,13 +125,9 @@ class Admin_Page {
 			(int) $settings->get( 'recent_orders_limit' )
 		);
 
-		/*
-		 * TODO (Days 3–6): fetch data here and pass it to the view, e.g.
-		 * $low_stock = ( new \OpsDashboardWC\Data\Inventory() )->get_low_stock_products(
-		 *     (int) $settings->get( 'low_stock_threshold' )
-		 * );
-		 * Keep queries in the Data classes and markup in the view.
-		 */
+		$low_stock = ( new \OpsDashboardWC\Data\Inventory() )->get_low_stock_products(
+			(int) $settings->get( 'low_stock_threshold' )
+		);
 
 		include ODWC_PATH . 'admin/views/dashboard.php';
 	}
