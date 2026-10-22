@@ -5,6 +5,7 @@
  * Variables available from Admin_Page::render():
  *
  * @var \OpsDashboardWC\Settings $settings
+ * @var array<int, array<string, mixed>> $recent_orders Rows from Data\Orders::get_recent_orders().
  *
  * Escape everything you print: esc_html(), esc_attr(), esc_url(),
  * and wp_kses_post() for HTML that WooCommerce already formatted.
@@ -51,12 +52,32 @@ defined( 'ABSPATH' ) || exit;
 
 		<section class="odwc-panel odwc-panel--orders">
 			<h2><?php esc_html_e( 'Recent orders', 'ops-dashboard-for-woocommerce' ); ?></h2>
-			<?php
-			/*
-			 * TODO (Days 5–6): render Data\Orders::get_recent_orders() with
-			 * number (linked), date, status, customer, total.
-			 */
-			?>
+			<?php if ( empty( $recent_orders ) ) : ?>
+				<p><?php esc_html_e( 'No orders yet.', 'ops-dashboard-for-woocommerce' ); ?></p>
+			<?php else : ?>
+				<table class="widefat striped">
+					<thead>
+						<tr>
+							<th scope="col"><?php esc_html_e( 'Order', 'ops-dashboard-for-woocommerce' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Date', 'ops-dashboard-for-woocommerce' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Status', 'ops-dashboard-for-woocommerce' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Customer', 'ops-dashboard-for-woocommerce' ); ?></th>
+							<th scope="col"><?php esc_html_e( 'Total', 'ops-dashboard-for-woocommerce' ); ?></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ( $recent_orders as $odwc_order ) : ?>
+							<tr>
+								<td><a href="<?php echo esc_url( $odwc_order['edit_url'] ); ?>">#<?php echo esc_html( $odwc_order['number'] ); ?></a></td>
+								<td><?php echo esc_html( $odwc_order['date'] ); ?></td>
+								<td><?php echo esc_html( $odwc_order['status'] ); ?></td>
+								<td><?php echo esc_html( $odwc_order['customer'] ); ?></td>
+								<td><?php echo wp_kses_post( $odwc_order['total'] ); ?></td>
+							</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+			<?php endif; ?>
 		</section>
 
 	</div>

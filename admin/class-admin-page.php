@@ -121,6 +121,10 @@ class Admin_Page {
 
 		$settings = $this->settings;
 
+		$recent_orders = ( new \OpsDashboardWC\Data\Orders() )->get_recent_orders(
+			(int) $settings->get( 'recent_orders_limit' )
+		);
+
 		/*
 		 * TODO (Days 3–6): fetch data here and pass it to the view, e.g.
 		 * $low_stock = ( new \OpsDashboardWC\Data\Inventory() )->get_low_stock_products(
