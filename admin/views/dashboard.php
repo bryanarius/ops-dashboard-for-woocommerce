@@ -20,6 +20,8 @@ defined( 'ABSPATH' ) || exit;
 <div class="wrap odwc">
 	<h1><?php esc_html_e( 'Ops Dashboard', 'ops-dashboard-for-woocommerce' ); ?></h1>
 
+	<?php settings_errors(); // Shows "Settings saved." after the form below is submitted. ?>
+
 	<div class="odwc-grid">
 
 		<section class="odwc-panel odwc-panel--sales">
@@ -113,6 +115,46 @@ defined( 'ABSPATH' ) || exit;
 					</tbody>
 				</table>
 			<?php endif; ?>
+		</section>
+
+		<section class="odwc-panel odwc-panel--settings">
+			<h2><?php esc_html_e( 'Settings', 'ops-dashboard-for-woocommerce' ); ?></h2>
+			<?php
+			$odwc_ranges = \OpsDashboardWC\Settings::ranges();
+			$odwc_name   = \OpsDashboardWC\Settings::OPTION_NAME;
+			?>
+			<form method="post" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>">
+				<?php settings_fields( \OpsDashboardWC\Settings::GROUP ); // Nonce, action and redirect back here. ?>
+
+				<p>
+					<label for="odwc-low-stock-threshold"><?php esc_html_e( 'Low-stock threshold', 'ops-dashboard-for-woocommerce' ); ?></label><br>
+					<input
+						type="number"
+						id="odwc-low-stock-threshold"
+						class="small-text"
+						name="<?php echo esc_attr( $odwc_name . '[low_stock_threshold]' ); ?>"
+						value="<?php echo esc_attr( $settings->get( 'low_stock_threshold' ) ); ?>"
+						min="<?php echo esc_attr( $odwc_ranges['low_stock_threshold'][0] ); ?>"
+						max="<?php echo esc_attr( $odwc_ranges['low_stock_threshold'][1] ); ?>"
+					>
+				</p>
+				<p class="description"><?php esc_html_e( 'Products at or below this stock level are listed as low stock.', 'ops-dashboard-for-woocommerce' ); ?></p>
+
+				<p>
+					<label for="odwc-recent-orders-limit"><?php esc_html_e( 'Recent orders to show', 'ops-dashboard-for-woocommerce' ); ?></label><br>
+					<input
+						type="number"
+						id="odwc-recent-orders-limit"
+						class="small-text"
+						name="<?php echo esc_attr( $odwc_name . '[recent_orders_limit]' ); ?>"
+						value="<?php echo esc_attr( $settings->get( 'recent_orders_limit' ) ); ?>"
+						min="<?php echo esc_attr( $odwc_ranges['recent_orders_limit'][0] ); ?>"
+						max="<?php echo esc_attr( $odwc_ranges['recent_orders_limit'][1] ); ?>"
+					>
+				</p>
+
+				<?php submit_button( __( 'Save settings', 'ops-dashboard-for-woocommerce' ) ); ?>
+			</form>
 		</section>
 
 	</div>

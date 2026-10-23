@@ -40,6 +40,13 @@
 	color: #646970;
 }
 
+.odwc-panel--settings label {
+	display: inline-block;
+	margin-bottom: 4px;
+	font-weight: 600;
+	color: #1d2327;
+}
+
 .odwc-stat__value {
 	font-size: 24px;
 	font-weight: 600;

@@ -37,6 +37,18 @@ class Settings {
 	}
 
 	/**
+	 * Allowed range for each setting. Used by sanitize() and the form inputs.
+	 *
+	 * @return array<string, array{0:int, 1:int}> Setting key => array( min, max ).
+	 */
+	public static function ranges(): array {
+		return array(
+			'low_stock_threshold' => array( 0, 1000 ),
+			'recent_orders_limit' => array( 1, 50 ),
+		);
+	}
+
+	/**
 	 * Read a single setting, falling back to its default.
 	 *
 	 * @param string $key Setting key.
@@ -56,6 +68,7 @@ class Settings {
 	 */
 	public function register(): void {
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
+		add_filter( 'option_page_capability_' . self::GROUP, array( $this, 'capability' ) );
 	}
 
 	/**
@@ -64,19 +77,27 @@ class Settings {
 	 * @return void
 	 */
 	public function register_settings(): void {
-		/*
-		 * TODO (Day 7): register the option and its fields.
-		 *
-		 * 1. register_setting( self::GROUP, self::OPTION_NAME, array(
-		 *        'type'              => 'array',
-		 *        'sanitize_callback' => array( $this, 'sanitize' ),
-		 *        'default'           => self::defaults(),
-		 *    ) );
-		 * 2. add_settings_section() and add_settings_field() for each setting,
-		 *    or render the form fields yourself in a view.
-		 *
-		 * Docs: https://developer.wordpress.org/plugins/settings/settings-api/
-		 */
+		register_setting(
+			self::GROUP,
+			self::OPTION_NAME,
+			array(
+				'type'              => 'array',
+				'sanitize_callback' => array( $this, 'sanitize' ),
+				'default'           => self::defaults(),
+			)
+		);
+	}
+
+	/**
+	 * Capability needed to save these settings through options.php.
+	 *
+	 * By default options.php requires manage_options (administrators only).
+	 * This lets shop managers, who can see the dashboard, save its settings too.
+	 *
+	 * @return string
+	 */
+	public function capability(): string {
+		return 'manage_woocommerce';
 	}
 
 	/**
@@ -86,14 +107,24 @@ class Settings {
 	 * @return array<string, int>
 	 */
 	public function sanitize( $input ): array {
-		/*
-		 * TODO (Day 7): validate each field.
-		 * - Cast to int with absint().
-		 * - Clamp to sensible ranges (e.g. threshold 0–1000, orders 1–50).
-		 * - Fall back to defaults() for anything missing or invalid.
-		 * Write a unit test for this method first; it is pure logic.
-		 */
-		unset( $input );
-		return self::defaults();
+		$defaults = self::defaults();
+
+		if ( ! is_array( $input ) ) {
+			return $defaults;
+		}
+
+		$clean = array();
+
+		foreach ( self::ranges() as $key => $range ) {
+			if ( ! isset( $input[ $key ] ) || ! is_numeric( $input[ $key ] ) ) {
+				$clean[ $key ] = $defaults[ $key ];
+				continue;
+			}
+
+			// Not absint(): it turns -50 into 50, but a negative threshold should become 0.
+			$clean[ $key ] = max( $range[0], min( $range[1], (int) $input[ $key ] ) );
+		}
+
+		return $clean;
 	}
 }
