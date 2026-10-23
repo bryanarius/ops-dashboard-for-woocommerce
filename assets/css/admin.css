@@ -22,3 +22,26 @@
 .odwc-panel--sales {
 	grid-column: 1 / -1;
 }
+
+.odwc-stats {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+	gap: 16px;
+}
+
+.odwc-stat {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.odwc-stat__label,
+.odwc-stat__meta {
+	color: #646970;
+}
+
+.odwc-stat__value {
+	font-size: 24px;
+	font-weight: 600;
+	color: #1d2327;
+}

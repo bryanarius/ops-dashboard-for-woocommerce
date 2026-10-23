@@ -125,6 +125,13 @@ class Admin_Page {
 			(int) $settings->get( 'recent_orders_limit' )
 		);
 
+		$sales_summary = new \OpsDashboardWC\Data\Sales_Summary();
+		$sales         = array(
+			1  => $sales_summary->get_totals( 1 ),
+			7  => $sales_summary->get_totals( 7 ),
+			30 => $sales_summary->get_totals( 30 ),
+		);
+
 		$low_stock = ( new \OpsDashboardWC\Data\Inventory() )->get_low_stock_products(
 			(int) $settings->get( 'low_stock_threshold' )
 		);

@@ -5,6 +5,7 @@
  * Variables available from Admin_Page::render():
  *
  * @var \OpsDashboardWC\Settings $settings
+ * @var array<int, array{revenue:float, order_count:int}> $sales Totals from Data\Sales_Summary::get_totals(), keyed by days.
  * @var array<int, array<string, mixed>> $low_stock     Rows from Data\Inventory::get_low_stock_products().
  * @var array<int, array<string, mixed>> $recent_orders Rows from Data\Orders::get_recent_orders().
  *
@@ -24,11 +25,29 @@ defined( 'ABSPATH' ) || exit;
 		<section class="odwc-panel odwc-panel--sales">
 			<h2><?php esc_html_e( 'Sales', 'ops-dashboard-for-woocommerce' ); ?></h2>
 			<?php
-			/*
-			 * TODO (Days 5–6): show revenue and order count for today, 7 days, 30 days
-			 * using Data\Sales_Summary::get_totals(). Format money with wc_price().
-			 */
+			$odwc_periods = array(
+				1  => __( 'Today', 'ops-dashboard-for-woocommerce' ),
+				7  => __( 'Last 7 days', 'ops-dashboard-for-woocommerce' ),
+				30 => __( 'Last 30 days', 'ops-dashboard-for-woocommerce' ),
+			);
 			?>
+			<div class="odwc-stats">
+				<?php foreach ( $odwc_periods as $odwc_days => $odwc_label ) : ?>
+					<div class="odwc-stat">
+						<span class="odwc-stat__label"><?php echo esc_html( $odwc_label ); ?></span>
+						<span class="odwc-stat__value"><?php echo wp_kses_post( wc_price( $sales[ $odwc_days ]['revenue'] ) ); ?></span>
+						<span class="odwc-stat__meta">
+							<?php
+							printf(
+								/* translators: %s: number of orders. */
+								esc_html( _n( '%s order', '%s orders', $sales[ $odwc_days ]['order_count'], 'ops-dashboard-for-woocommerce' ) ),
+								esc_html( number_format_i18n( $sales[ $odwc_days ]['order_count'] ) )
+							);
+							?>
+						</span>
+					</div>
+				<?php endforeach; ?>
+			</div>
 		</section>
 
 		<section class="odwc-panel odwc-panel--low-stock">
