@@ -6,7 +6,7 @@ One admin screen for store managers: low-stock products, recent orders, and sale
 
 > **Status:** in development
 
-![Ops Dashboard showing sales totals, low-stock products and recent orders](docs/screenshot.jpg)
+![Ops Dashboard showing sales totals, low-stock products, recent orders and settings](docs/screenshot.jpg)
 
 ## Features
 
@@ -14,7 +14,7 @@ One admin screen for store managers: low-stock products, recent orders, and sale
 - [x] Low-stock panel with configurable threshold and links to edit each product
 - [x] Recent orders panel (status, total, customer)
 - [x] Sales summary: today, last 7 days, last 30 days
-- [ ] Settings: low-stock threshold, number of recent orders
+- [x] Settings: low-stock threshold, number of recent orders
 - [ ] AJAX filtering by category / stock status
 - [ ] *Stretch:* daily low-stock email (WP-Cron), CSV export, REST endpoint
 
@@ -69,7 +69,6 @@ For a local store with sample data, use [LocalWP](https://localwp.com/), install
 ## Known limitations
 
 - **Sales totals load every paid order in the period.** Revenue is summed in PHP, so the 30-day figure can be slow on stores with thousands of orders a month. Not cached yet.
-- **Low-stock threshold uses the default (5).** The Settings page to change it isn't built yet.
 - **Variations aren't counted as low stock.** Only top-level products with stock management enabled are checked, so a low "Hoodie – Red" variation won't appear.
 
 ## License
