@@ -26,6 +26,7 @@ class Orders {
 	public function get_recent_orders( int $limit ): array {
 		$query  = new \WC_Order_Query(
 			array(
+				'type'    => 'shop_order', // Exclude refunds, which WooCommerce stores as separate orders.
 				'limit'   => $limit,
 				'orderby' => 'date',
 				'order'   => 'DESC',

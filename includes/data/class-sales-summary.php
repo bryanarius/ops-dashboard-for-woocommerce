@@ -35,6 +35,7 @@ class Sales_Summary {
 
 		$orders = wc_get_orders(
 			array(
+				'type'         => 'shop_order', // Exclude refunds, which have negative totals.
 				'status'       => self::paid_statuses(),
 				'limit'        => -1,
 				'date_created' => '>=' . $start->getTimestamp(),
