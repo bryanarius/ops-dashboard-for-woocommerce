@@ -7,6 +7,7 @@
  * @var \OpsDashboardWC\Settings $settings
  * @var array<int, array{revenue:float, order_count:int}> $sales Totals from Data\Sales_Summary::get_totals(), keyed by days.
  * @var array<int, array<string, mixed>> $low_stock     Rows from Data\Inventory::get_low_stock_products().
+ * @var array<string, string>            $categories    Category slug => name, from Data\Inventory::get_categories().
  * @var array<int, array<string, mixed>> $recent_orders Rows from Data\Orders::get_recent_orders().
  *
  * Escape everything you print: esc_html(), esc_attr(), esc_url(),
@@ -62,29 +63,43 @@ defined( 'ABSPATH' ) || exit;
 				);
 				?>
 			</h2>
-			<?php // TODO (Day 7): add a category / stock-status filter that calls the AJAX handler. ?>
-			<?php if ( empty( $low_stock ) ) : ?>
-				<p><?php esc_html_e( 'All products are above the low-stock threshold.', 'ops-dashboard-for-woocommerce' ); ?></p>
-			<?php else : ?>
-				<table class="widefat striped">
-					<thead>
+			<p class="odwc-filter">
+				<label for="odwc-low-stock-category"><?php esc_html_e( 'Category', 'ops-dashboard-for-woocommerce' ); ?></label>
+				<select id="odwc-low-stock-category">
+					<option value=""><?php esc_html_e( 'All categories', 'ops-dashboard-for-woocommerce' ); ?></option>
+					<?php foreach ( $categories as $odwc_slug => $odwc_category_name ) : ?>
+						<option value="<?php echo esc_attr( $odwc_slug ); ?>"><?php echo esc_html( $odwc_category_name ); ?></option>
+					<?php endforeach; ?>
+				</select>
+			</p>
+
+			<?php
+			/*
+			 * The table and the empty message are both always printed, and one is
+			 * hidden. That way admin.js can update the rows and toggle between them.
+			 */
+			?>
+			<p id="odwc-low-stock-empty" <?php echo empty( $low_stock ) ? '' : 'hidden'; ?>>
+				<?php esc_html_e( 'All products are above the low-stock threshold.', 'ops-dashboard-for-woocommerce' ); ?>
+			</p>
+			<table id="odwc-low-stock-table" class="widefat striped" <?php echo empty( $low_stock ) ? 'hidden' : ''; ?>>
+				<thead>
+					<tr>
+						<th scope="col"><?php esc_html_e( 'Product', 'ops-dashboard-for-woocommerce' ); ?></th>
+						<th scope="col"><?php esc_html_e( 'SKU', 'ops-dashboard-for-woocommerce' ); ?></th>
+						<th scope="col"><?php esc_html_e( 'Stock', 'ops-dashboard-for-woocommerce' ); ?></th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach ( $low_stock as $odwc_product ) : ?>
 						<tr>
-							<th scope="col"><?php esc_html_e( 'Product', 'ops-dashboard-for-woocommerce' ); ?></th>
-							<th scope="col"><?php esc_html_e( 'SKU', 'ops-dashboard-for-woocommerce' ); ?></th>
-							<th scope="col"><?php esc_html_e( 'Stock', 'ops-dashboard-for-woocommerce' ); ?></th>
+							<td><a href="<?php echo esc_url( $odwc_product['edit_url'] ); ?>"><?php echo esc_html( $odwc_product['name'] ); ?></a></td>
+							<td><?php echo esc_html( $odwc_product['sku'] ); ?></td>
+							<td><?php echo esc_html( $odwc_product['stock'] ); ?></td>
 						</tr>
-					</thead>
-					<tbody>
-						<?php foreach ( $low_stock as $odwc_product ) : ?>
-							<tr>
-								<td><a href="<?php echo esc_url( $odwc_product['edit_url'] ); ?>"><?php echo esc_html( $odwc_product['name'] ); ?></a></td>
-								<td><?php echo esc_html( $odwc_product['sku'] ); ?></td>
-								<td><?php echo esc_html( $odwc_product['stock'] ); ?></td>
-							</tr>
-						<?php endforeach; ?>
-					</tbody>
-				</table>
-			<?php endif; ?>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
 		</section>
 
 		<section class="odwc-panel odwc-panel--orders">

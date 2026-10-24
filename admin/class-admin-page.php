@@ -28,6 +28,11 @@ class Admin_Page {
 	public const CAPABILITY = 'manage_woocommerce';
 
 	/**
+	 * AJAX action name. Also used as the nonce action for that request.
+	 */
+	public const AJAX_ACTION = 'odwc_filter_low_stock';
+
+	/**
 	 * Hook suffix returned by add_submenu_page(), used to load assets only on our page.
 	 *
 	 * @var string
@@ -59,13 +64,38 @@ class Admin_Page {
 		add_action( 'admin_menu', array( $this, 'add_menu_page' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 
-		/*
-		 * TODO (Day 7): register an AJAX handler for filtering, e.g.
-		 * add_action( 'wp_ajax_odwc_filter_low_stock', array( $this, 'ajax_filter_low_stock' ) );
-		 * In the handler: check_ajax_referer(), current_user_can( self::CAPABILITY ),
-		 * sanitize input, then wp_send_json_success().
-		 * (Alternative: a REST route with register_rest_route() and a permission_callback.)
-		 */
+		// Logged-in users only. There is deliberately no wp_ajax_nopriv_ hook.
+		add_action( 'wp_ajax_' . self::AJAX_ACTION, array( $this, 'ajax_filter_low_stock' ) );
+	}
+
+	/**
+	 * AJAX: low-stock products, optionally filtered by category.
+	 *
+	 * Expects POST fields: nonce, category (slug, may be empty).
+	 * Responds with { success: true, data: [ rows ] } or { success: false }.
+	 *
+	 * @return void
+	 */
+	public function ajax_filter_low_stock(): void {
+		// 1. Nonce: the request came from our dashboard page. Dies with a 403 if not.
+		check_ajax_referer( self::AJAX_ACTION, 'nonce' );
+
+		// 2. Capability: admin-ajax.php does not check our menu capability for us.
+		if ( ! current_user_can( self::CAPABILITY ) ) {
+			wp_send_json_error( null, 403 );
+			return;
+		}
+
+		// 3. Sanitize: a category slug only ever contains lowercase letters, numbers and dashes.
+		$category = isset( $_POST['category'] ) ? sanitize_title( wp_unslash( $_POST['category'] ) ) : '';
+
+		$rows = ( new \OpsDashboardWC\Data\Inventory() )->get_low_stock_products(
+			(int) $this->settings->get( 'low_stock_threshold' ),
+			20,
+			$category
+		);
+
+		wp_send_json_success( $rows );
 	}
 
 	/**
@@ -100,13 +130,17 @@ class Admin_Page {
 		wp_enqueue_style( 'odwc-admin', ODWC_URL . 'assets/css/admin.css', array(), ODWC_VERSION );
 		wp_enqueue_script( 'odwc-admin', ODWC_URL . 'assets/js/admin.js', array(), ODWC_VERSION, true );
 
-		/*
-		 * TODO (Day 7): pass data to admin.js, e.g.
-		 * wp_add_inline_script( 'odwc-admin', 'const odwcData = ' . wp_json_encode( array(
-		 *     'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-		 *     'nonce'   => wp_create_nonce( 'odwc_filter' ),
-		 * ) ) . ';', 'before' );
-		 */
+		// Gives admin.js what it needs for the AJAX request, as a global odwcData object.
+		$data = array(
+			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+			'action'  => self::AJAX_ACTION,
+			'nonce'   => wp_create_nonce( self::AJAX_ACTION ),
+			'i18n'    => array(
+				'error' => __( 'Could not load products. Please reload the page and try again.', 'ops-dashboard-for-woocommerce' ),
+			),
+		);
+
+		wp_add_inline_script( 'odwc-admin', 'const odwcData = ' . wp_json_encode( $data ) . ';', 'before' );
 	}
 
 	/**
@@ -132,9 +166,11 @@ class Admin_Page {
 			30 => $sales_summary->get_totals( 30 ),
 		);
 
-		$low_stock = ( new \OpsDashboardWC\Data\Inventory() )->get_low_stock_products(
+		$inventory  = new \OpsDashboardWC\Data\Inventory();
+		$low_stock  = $inventory->get_low_stock_products(
 			(int) $settings->get( 'low_stock_threshold' )
 		);
+		$categories = $inventory->get_categories();
 
 		include ODWC_PATH . 'admin/views/dashboard.php';
 	}

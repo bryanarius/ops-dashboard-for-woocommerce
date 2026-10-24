@@ -40,6 +40,12 @@
 	color: #646970;
 }
 
+.odwc-filter {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
 .odwc-panel--settings label {
 	display: inline-block;
 	margin-bottom: 4px;
