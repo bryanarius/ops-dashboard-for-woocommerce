@@ -156,7 +156,7 @@ function create_products(): array {
 
 		$product = new \WC_Product_Simple();
 		$product->set_name( $name );
-		$product->set_sku( 'demo-' . sanitize_title( $name ) );
+		$product->set_sku( sanitize_title( $name ) );
 		$product->set_regular_price( (string) $price );
 		$product->set_manage_stock( true );
 		$product->set_stock_quantity( $stock );
