@@ -3,7 +3,7 @@
  * Plugin Name:          Ops Dashboard for WooCommerce
  * Plugin URI:           https://github.com/bryanarius/ops-dashboard-for-woocommerce
  * Description:          One admin screen for store managers: low-stock products, recent orders, and sales at a glance.
- * Version:              0.1.0
+ * Version:              1.0.0
  * Requires at least:    6.5
  * Requires PHP:         8.1
  * Requires Plugins:     woocommerce
@@ -20,7 +20,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'ODWC_VERSION', '0.1.0' );
+define( 'ODWC_VERSION', '1.0.0' );
 define( 'ODWC_FILE', __FILE__ );
 define( 'ODWC_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ODWC_URL', plugin_dir_url( __FILE__ ) );
