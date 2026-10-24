@@ -2,21 +2,27 @@
 
 [![CI](https://github.com/bryanarius/ops-dashboard-for-woocommerce/actions/workflows/ci.yml/badge.svg)](https://github.com/bryanarius/ops-dashboard-for-woocommerce/actions/workflows/ci.yml)
 
-One admin screen for store managers: low-stock products, recent orders, and sales at a glance, without clicking through several WooCommerce pages.
+A WordPress plugin that gives WooCommerce store managers one admin screen for the numbers they check every day: what's running out of stock, what just sold, and how sales are trending. No clicking through several WooCommerce pages.
 
-> **Status:** in development
+> **Version 1.0.0.** All planned features are built and tested. See the [roadmap](#roadmap) for what's next.
 
 ![Ops Dashboard showing sales totals, low-stock products, recent orders and settings](docs/screenshot.jpg)
 
 ## Features
 
-- [x] Dashboard page under **WooCommerce → Ops Dashboard**
-- [x] Low-stock panel with configurable threshold and links to edit each product
-- [x] Recent orders panel (status, total, customer)
-- [x] Sales summary: today, last 7 days, last 30 days
-- [x] Settings: low-stock threshold, number of recent orders
-- [x] AJAX filtering of the low-stock panel by category
-- [ ] *Stretch:* stock-status filter, daily low-stock email (WP-Cron), CSV export, REST endpoint
+- **Sales summary:** revenue and paid-order count for today, the last 7 days, and the last 30 days, in the store's timezone and currency
+- **Low-stock panel:** products at or below a threshold, lowest first, each linking to its edit screen
+- **Category filter:** narrows the low-stock list instantly over AJAX, without reloading the page
+- **Recent orders:** number, date, status, customer and total, linking to each order
+- **Settings:** low-stock threshold and number of recent orders, editable by shop managers as well as admins
+
+## Highlights
+
+- **HPOS-compatible.** All data goes through WooCommerce's CRUD APIs (`wc_get_orders()`, `wc_get_products()`), never raw SQL, so it works whether orders live in `wp_posts` or WooCommerce's own tables.
+- **Security at every entry point.** Capability checks on the page and the AJAX handler, nonces on the settings form and AJAX requests, input clamped to safe ranges, and all output escaped (including `textContent` on the JavaScript side).
+- **A real bug, found and fixed.** Seeding realistic demo data showed refunds being counted as orders with negative totals. Queries now filter `'type' => 'shop_order'`.
+- **Tested and linted in CI.** PHPUnit with Brain Monkey for unit tests, and PHPCS with WordPress Coding Standards, run on PHP 8.1–8.3 by GitHub Actions.
+- **Decisions written down.** [docs/decisions.md](docs/decisions.md) explains the trade-offs, from timezone handling to why `absint()` was the wrong sanitizer.
 
 ## Built with
 
@@ -83,6 +89,15 @@ It creates 15 products across categories with stock from 0 to 20, and 30 orders 
 - It runs only from the command line and only on local hosts (`localhost`, `*.test`, `*.local`) or sites with `WP_ENVIRONMENT_TYPE` set to `local` or `development`.
 - Emails and automatic stock reduction are turned off while it runs.
 - If this folder is symlinked, set `WP_LOAD=/path/to/wp-load.php`.
+
+## Roadmap
+
+- Cache sales totals in a transient
+- Include product variations in the low-stock list
+- Stock-status filter
+- Daily low-stock email (WP-Cron)
+- CSV export of low-stock products
+- REST API endpoint
 
 ## Known limitations
 
