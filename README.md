@@ -46,6 +46,7 @@ admin/
   views/dashboard.php               Markup only
 assets/                             Admin CSS and JS
 tests/Unit/                         PHPUnit tests (no WordPress needed)
+bin/seed-demo-data.php              Dev tool: fills a local store with demo data
 docs/decisions.md                   Design decisions and trade-offs
 ```
 
@@ -65,6 +66,23 @@ composer test      # PHPUnit
 ```
 
 For a local store with sample data, use [LocalWP](https://localwp.com/), install WooCommerce, and import its sample products (`wp-content/plugins/woocommerce/sample-data/sample_products.csv`). Symlink this folder into the site's `wp-content/plugins/`.
+
+### Demo data
+
+To fill every dashboard panel, seed demo products and orders from the plugin folder:
+
+```bash
+php bin/seed-demo-data.php           # create demo data (re-running replaces it)
+php bin/seed-demo-data.php --reset   # remove demo data only
+```
+
+It creates 15 products across categories with stock from 0 to 20, and 30 orders over the last 45 days in mixed statuses (including refunds and some orders from today).
+
+- Use the PHP binary that can reach your site's database, e.g. `/Applications/XAMPP/xamppfiles/bin/php` on XAMPP.
+- Everything it creates is tagged with `_odwc_seed` meta, so it never touches your own products or orders.
+- It runs only from the command line and only on local hosts (`localhost`, `*.test`, `*.local`) or sites with `WP_ENVIRONMENT_TYPE` set to `local` or `development`.
+- Emails and automatic stock reduction are turned off while it runs.
+- If this folder is symlinked, set `WP_LOAD=/path/to/wp-load.php`.
 
 ## Known limitations
 
