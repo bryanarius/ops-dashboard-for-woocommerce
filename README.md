@@ -15,8 +15,8 @@ One admin screen for store managers: low-stock products, recent orders, and sale
 - [x] Recent orders panel (status, total, customer)
 - [x] Sales summary: today, last 7 days, last 30 days
 - [x] Settings: low-stock threshold, number of recent orders
-- [ ] AJAX filtering by category / stock status
-- [ ] *Stretch:* daily low-stock email (WP-Cron), CSV export, REST endpoint
+- [x] AJAX filtering of the low-stock panel by category
+- [ ] *Stretch:* stock-status filter, daily low-stock email (WP-Cron), CSV export, REST endpoint
 
 ## Built with
 
