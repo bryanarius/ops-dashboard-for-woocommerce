@@ -2,9 +2,16 @@
 
 .odwc-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+	grid-template-columns: 1fr;
 	gap: 16px;
 	margin-top: 16px;
+}
+
+/* Wide screens: low stock | recent orders (equal) | narrow settings. */
+@media (min-width: 1100px) {
+	.odwc-grid {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 240px;
+	}
 }
 
 .odwc-panel {
@@ -14,13 +21,50 @@
 	padding: 16px;
 }
 
+/* Same heading height in every panel (tall enough for the filter), so tables line up. */
 .odwc-panel h2 {
-	margin-top: 0;
-	font-size: 14px;
+	display: flex;
+	align-items: center;
+	min-height: 40px; /* Height of a WP admin select. */
+	margin: 0 0 12px;
+	font-size: 16px;
+	font-weight: 600;
+	color: #1d2327;
+}
+
+/* Sales has no filter or table to line up with, so its heading can be compact. */
+.odwc-panel--sales h2 {
+	min-height: 0;
+}
+
+/* Low stock: heading and category filter share the first row, the rest goes full width below. */
+.odwc-panel--low-stock {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	column-gap: 8px;
+	align-content: start;
+}
+
+.odwc-panel--low-stock > * {
+	grid-column: 1 / -1;
+}
+
+.odwc-panel--low-stock > h2 {
+	grid-column: 1;
+}
+
+.odwc-panel--low-stock > .odwc-filter {
+	grid-column: 2;
+	margin: 0 0 12px;
 }
 
 .odwc-panel--sales {
 	grid-column: 1 / -1;
+}
+
+/* If the table is still too wide, scroll it inside the panel instead of overflowing it. */
+.odwc-panel--orders {
+	overflow-x: auto;
 }
 
 .odwc-stats {
@@ -32,7 +76,7 @@
 .odwc-stat {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: 2px;
 }
 
 .odwc-stat__label,
@@ -51,6 +95,11 @@
 	margin-bottom: 4px;
 	font-weight: 600;
 	color: #1d2327;
+}
+
+/* Keep each order date on one line. The 2nd column is Date. */
+.odwc-panel--orders td:nth-child(2) {
+	white-space: nowrap;
 }
 
 .odwc-stat__value {
