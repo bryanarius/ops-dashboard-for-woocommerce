@@ -8,6 +8,10 @@ A WordPress plugin that gives WooCommerce store managers one admin screen for th
 
 ![Ops Dashboard showing sales totals, low-stock products, recent orders and settings](docs/screenshot.jpg)
 
+## Demo
+
+https://github.com/user-attachments/assets/178c0b04-692c-48bb-b65e-1f3d31b2b60b
+
 ## Features
 
 - **Sales summary:** revenue and paid-order count for today, the last 7 days, and the last 30 days, in the store's timezone and currency
