@@ -160,11 +160,12 @@ class Admin_Page {
 		);
 
 		$sales_summary = new \OpsDashboardWC\Data\Sales_Summary();
-		$sales         = array(
-			1  => $sales_summary->get_totals( 1 ),
-			7  => $sales_summary->get_totals( 7 ),
-			30 => $sales_summary->get_totals( 30 ),
-		);
+		$sales         = array();
+
+		// Same list flush_cache() clears, so every cached period gets cleared.
+		foreach ( \OpsDashboardWC\Data\Sales_Summary::PERIODS as $days ) {
+			$sales[ $days ] = $sales_summary->get_totals( $days );
+		}
 
 		$inventory  = new \OpsDashboardWC\Data\Inventory();
 		$low_stock  = $inventory->get_low_stock_products(

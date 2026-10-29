@@ -47,6 +47,10 @@ final class Plugin {
 		$settings = new Settings();
 		$settings->register();
 
+		// Outside is_admin(): orders are also created at checkout, on the front end.
+		$sales_summary = new Data\Sales_Summary();
+		$sales_summary->register();
+
 		if ( is_admin() ) {
 			$admin_page = new Admin_Page( $settings );
 			$admin_page->register();
