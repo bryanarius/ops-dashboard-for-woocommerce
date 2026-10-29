@@ -14,3 +14,6 @@ define( 'ABSPATH', __DIR__ . '/' );
 define( 'ODWC_VERSION', 'test' );
 define( 'ODWC_PATH', dirname( __DIR__ ) . '/' );
 define( 'ODWC_URL', 'https://example.test/wp-content/plugins/ops-dashboard-for-woocommerce/' );
+
+// WordPress time constants used by the plugin.
+define( 'MINUTE_IN_SECONDS', 60 );
